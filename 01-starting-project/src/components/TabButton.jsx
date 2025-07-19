@@ -1,9 +1,8 @@
-export const TabeButton = ({ children, onClickHandler, isActive }) => {
+export const TabeButton = ({ children, isActive,...props }) => {
   return (
     <li>
       <button
-        className={isActive ? "active" : undefined}
-        onClick={onClickHandler}
+        className={isActive ? "active" : undefined} {...props}
       >
         {children}
       </button>
