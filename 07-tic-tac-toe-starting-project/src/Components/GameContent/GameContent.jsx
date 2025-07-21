@@ -14,13 +14,18 @@ function hundelPlayerActive(turn) {
   return currentPlayer;
 }
 
+const PLAYERS = {
+  X: "player 1",
+  O: "Player 2",
+};
+
 const initialGameBoard = [
   [null, null, null],
   [null, null, null],
   [null, null, null],
 ];
 
-function getGameBoard() {
+function getGameBoard(gameTurn) {
   const gameBoard = [...initialGameBoard.map((innerArray) => [...innerArray])];
   for (let turn of gameTurn) {
     const { square, player } = turn;
@@ -30,22 +35,9 @@ function getGameBoard() {
   return gameBoard;
 }
 
-export const GameContent = () => {
-  const [gameTurn, setGameTurn] = useState([]);
-  const [players, setPlayers] = useState({
-    X: "player 1",
-    O: "Player 2",
-  });
+function getGameWinner(gameBoard, players) {
+  let winner;
 
-  const gameBoard = [...initialGameBoard.map((innerArray) => [...innerArray])];
-  for (let turn of gameTurn) {
-    const { square, player } = turn;
-    const { row, colum } = square;
-    gameBoard[row][colum] = player;
-  }
-
-  let winner = gameTurn.length === 9 ? "Draw" : null;
-  
   for (let combination of WINNING_COMBINATIONS) {
     const firstSquareSymbol =
       gameBoard[combination[0].row][combination[0].column];
@@ -62,6 +54,17 @@ export const GameContent = () => {
       winner = players[firstSquareSymbol];
     }
   }
+  return winner;
+}
+
+export const GameContent = () => {
+  const [gameTurn, setGameTurn] = useState([]);
+  const [players, setPlayers] = useState(PLAYERS);
+
+  const gameBoard = getGameBoard(gameTurn);
+
+  const winner = getGameWinner(gameBoard, players);
+  const hasDraw = gameTurn.length === 9 && !winner;
 
   const activePlayer = hundelPlayerActive(gameTurn);
 
@@ -89,18 +92,18 @@ export const GameContent = () => {
         <ol id="players" className="highlight-player">
           <Player
             isActive={activePlayer === "X"}
-            initialName="Player 1"
+            initialName={PLAYERS.X}
             playerSymbol="X"
             onSaveEditing={handelWinnerName}
           />
           <Player
             isActive={activePlayer === "O"}
-            initialName="Player 2"
+            initialName={PLAYERS.O}
             playerSymbol="O"
             onSaveEditing={handelWinnerName}
           />
         </ol>
-        {winner && (
+        {(winner || hasDraw) && (
           <GameOver
             winner={winner}
             onClick={() => {
