@@ -55,8 +55,3 @@ export const Examples = () => {
     </Section>
   );
 };
-
-//   <menu>
-
-//   </menu>
-//   {tabeContant}
